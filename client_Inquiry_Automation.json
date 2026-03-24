@@ -1,0 +1,204 @@
+{
+  "name": "Client Inquiry Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1xm6qyaPl4Zk4qM7KHRHhHGUVQ807PsgvekyWtTBSr_U",
+          "mode": "list",
+          "cachedResultName": "Client enquiry form (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xm6qyaPl4Zk4qM7KHRHhHGUVQ807PsgvekyWtTBSr_U/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 42362854,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xm6qyaPl4Zk4qM7KHRHhHGUVQ807PsgvekyWtTBSr_U/edit#gid=42362854"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        -32
+      ],
+      "id": "38fe4854-9343-405b-ba52-18182980998c",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "abKnOMf7wIPC3hDW",
+          "name": "Google Sheets Trigger OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f1ceab2c-da1e-4d4c-821e-080bc2d77f37",
+              "name": "Full Name",
+              "value": "={{ $json['Full Name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "50a86dfc-7dae-4a34-a73e-a59ea751c834",
+              "name": "Email ",
+              "value": "={{ $json['Email '] }}",
+              "type": "string"
+            },
+            {
+              "id": "59cb9a67-f173-4c4b-82cb-cc667af50abd",
+              "name": "Email ",
+              "value": "={{ $json['Email '] }}",
+              "type": "string"
+            },
+            {
+              "id": "26099e2a-cad4-4261-8872-c4e1a379c794",
+              "name": "Phone Number",
+              "value": "={{ $json['Phone Number'] }}",
+              "type": "string"
+            },
+            {
+              "id": "d9968009-d2ec-4974-a4a8-e5fd55c9a250",
+              "name": "Company Name",
+              "value": "={{ $json['Company Name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "d67e2a39-ab1c-439a-8836-d842b09d67e5",
+              "name": "Inquiry Type",
+              "value": "={{ $json['Inquiry Type'] }}",
+              "type": "string"
+            },
+            {
+              "id": "084b4155-2f78-43fe-a8a8-1d79cc9ad844",
+              "name": "Message ",
+              "value": "={{ $json['Message '] }}",
+              "type": "string"
+            },
+            {
+              "id": "33afacae-b173-40f8-9db2-8a58074da7f5",
+              "name": "Timestamp",
+              "value": "={{ $json.Timestamp }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -144,
+        -32
+      ],
+      "id": "4cf4afb8-9fce-43b2-b05e-dbf0b4e3b66e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "chatId": "765053038",
+        "text": "=🚀 New Client Inquiry  👤 {{$json.client_name}} 📧 {{$json.client_email}} 📞 {{$json.client_phone}} 🏢 {{$json.company}}  💬 {{$json.message}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        -32
+      ],
+      "id": "5d3a93a0-5a70-4475-a9e4-1c22ed71ae4d",
+      "name": "Send a text message",
+      "webhookId": "b51e5acd-937e-49ac-b32a-d324a3c139ba",
+      "credentials": {
+        "telegramApi": {
+          "id": "zljPfpJwrLvDKpKq",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Edit Fields').item.json['Email '] }}",
+        "subject": "We received your inquiry",
+        "message": "=Hi {{ $('Edit Fields').item.json['Full Name'] }},\n\nThank you for reaching out. We have received your inquiry and will get back to you shortly.\n\n📌 Inquiry Type: {{ $('Edit Fields').item.json['Inquiry Type'] }}\nBest regards,  \nChristian",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        -32
+      ],
+      "id": "6322d13f-65e4-4690-9af6-5e91c6e53363",
+      "name": "Send a message",
+      "webhookId": "c1728197-9fcb-4433-8e2d-4e9acb246747",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "rAX1U0wjIZdDomlR",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "1c085249-d49d-4b46-ae60-b01e4360bd02",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b8a226a3dc722acca4bf3ed7cbc8976fef593e8066a79b8d8090cf00e3c4a2c5"
+  },
+  "id": "cg9R9mk7s99JPq33",
+  "tags": []
+}
